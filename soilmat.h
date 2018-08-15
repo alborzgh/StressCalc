@@ -8,48 +8,54 @@ class soilLayer
 {
 public:
   soilLayer();
-  soilLayer(QString lName, double nThick, double lUnitWeight, double lCohesion, double lFA,double lStiffness,QColor color);
+  soilLayer(QString, double, double, double, double, double, double, QColor);
    ~soilLayer();
 
   void setLayerName(QString name) {layerName = name;}
   void setLayerThickness(double H){layerH = H;}
-  void setLayerCohesion(double c){layerC = c;}
-  void setLayerFrictionAngle(double phi){layerPhi = phi;}
+  void setLayerOverburdenStress(double sigma0){layerTopStress = sigma0;}
   void setLayerStiffness(double G){layerG = G;}
+  void setLayerFrictionAng(double Phi){layerPhi = Phi;}
+  void setLayerCohesion(double c){layerCohesion = c;}
   void setLayerUnitWeight(double gamma){layerGamma = gamma;}
-  void setLayerTopStress(double stress){topStress = stress;}
-  void update();
+  void setLayerSatUnitWeight(double gamma){layerGammaSat = gamma;}
+  void setLayerTopStress(double stress){layerTopStress = stress;}
+  void setLayerDepth(double depth){layerDepth = depth;}
+  void setGWTdepth(double gwt){layerGWT = gwt;}
+  void setLayerGWHead(double gwt){layerGWT = gwt;}
+  void setWaterUnitWeight(double gamma){waterUnitWeight = gamma;}
+  void setLayerColor(QColor color){layerColor = color;}
 
   QString getLayerName(){ return layerName;}
   QColor getLayerColor(){return layerColor;}
   double getLayerThickness(){return layerH;}
-  double getLayerCohesion(){return layerC;}
   double getLayerStiffness(){return layerG;}
-  double getLayerFrictionAngle(){return layerPhi;}
+  double getLayerFrictionAng(){return layerPhi;}
+  double getLayerCohesion(){return layerCohesion;}
   double getLayerUnitWeight(){return layerGamma;}
-  double getLayerTopStress(){return topStress;}
-  double getLayerBottomStress(){return botStress;}
-  double getLayerTopStrength(){return topStrength;}
-  double getLayerBottomStrength(){return botStrength;}
+  double getLayerSatUnitWeight(){return layerGammaSat;}
+  double getLayerDepth(){return layerDepth;}
+  double getLayerGWTdepth(){return layerGWT;}
+  double getLayerTopStress();
+  double getLayerBottomStress();
+  double getLayerTopStrength();
+  double getLayerBottomStrength();
+  double getEffectiveStress(double depth);
 
 private:
-  void calcStress();
-  void calcStrength();
-
   QString layerName;
+  double layerTopStress;
+  double layerDepth;
   double layerH;
   double layerGamma;
-  double layerC;
-  double layerPhi;
+  double layerGammaSat;
   double layerG;
+  double layerPhi;
+  double layerCohesion;
+  double layerGWT;
+  double waterUnitWeight;
   QColor layerColor;
 
-double topStress;
-double botStress;
-double topStrength;
-double botStrength;
-
-static int numLayers;
 };
 
 #endif // SOILMAT_H

@@ -68,9 +68,10 @@ MainWindow::MainWindow(QWidget *parent)
     tabbedPage->addTab(stiffnessResultPage, tr("Stiffness Results"));
 
     // initialize the plots
-    plotStresses();
-    plotStrength();
-    plotStiffness();
+    // plotStresses();
+    // plotStrength();
+    // plotStiffness();
+    updateEverything();
 
     // set the main layout
     centWidget->setLayout(mainLayout);
@@ -95,7 +96,7 @@ void MainWindow::setupContent()
         table->setItem(ii , 0, new QTableWidgetItem(soilLayers[ii].getLayerName()));
         table->setItem(ii , 1, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerThickness())));
         table->setItem(ii , 2, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerUnitWeight())));
-        table->setItem(ii , 3, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerFrictionAngle())));
+        table->setItem(ii , 3, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerFrictionAng())));
         table->setItem(ii , 4, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerCohesion())));
         table->setItem(ii , 5, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerStiffness())));
         table->setItem(ii , 6, new QTableWidgetItem());
@@ -179,7 +180,7 @@ void MainWindow::addLayer()
   table->setItem(rowIndex+1 , 0, new QTableWidgetItem(newLayer.getLayerName()));
   table->setItem(rowIndex+1 , 1, new QTableWidgetItem(QString::number(newLayer.getLayerThickness())));
   table->setItem(rowIndex+1 , 2, new QTableWidgetItem(QString::number(newLayer.getLayerUnitWeight())));
-  table->setItem(rowIndex+1 , 3, new QTableWidgetItem(QString::number(newLayer.getLayerFrictionAngle())));
+  table->setItem(rowIndex+1 , 3, new QTableWidgetItem(QString::number(newLayer.getLayerFrictionAng())));
   table->setItem(rowIndex+1 , 4, new QTableWidgetItem(QString::number(newLayer.getLayerCohesion())));
   table->setItem(rowIndex+1 , 5, new QTableWidgetItem(QString::number(newLayer.getLayerStiffness())));
   table->setItem(rowIndex+1 , 6, new QTableWidgetItem());
@@ -199,11 +200,11 @@ MainWindow::sampleSoilLayers()
 {
   // create sample soil layers
   soilLayers.clear();
-  soilLayers.push_back(soilLayer("Sand",2,120,0,32,10000, QColor(100,0,0,100)));
-  soilLayers.push_back(soilLayer("Silt",2,110,0,28,12000, QColor(0,100,0,100)));
-  soilLayers.push_back(soilLayer("Clay 1",3,110,500,15,20000, QColor(0,0,100,100)));
-  soilLayers.push_back(soilLayer("Silty Sand",5,115,0,30,11000, QColor(255,0,0,100)));
-  soilLayers.push_back(soilLayer("Clay 2",6,110,0,32,5000, QColor(0,255,0,100)));
+  soilLayers.push_back(soilLayer("Sand",2,110,120,10000,32,0.0, QColor(100,0,0,100)));
+  soilLayers.push_back(soilLayer("Silt",2,105,110,12000,16,500, QColor(0,100,0,100)));
+  soilLayers.push_back(soilLayer("Clay 1",3,105,110,20000,0,2000, QColor(0,0,100,100)));
+  soilLayers.push_back(soilLayer("Silty Sand",5,110,115,11000,36,0, QColor(255,0,0,100)));
+  soilLayers.push_back(soilLayer("Clay 2",6,105,110,5000,0,1500, QColor(0,255,0,100)));
 }
 
 void MainWindow::reDrawTable()
@@ -216,7 +217,7 @@ void MainWindow::reDrawTable()
         table->setItem(ii , 0, new QTableWidgetItem(soilLayers[ii].getLayerName()));
         table->setItem(ii , 1, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerThickness())));
         table->setItem(ii , 2, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerUnitWeight())));
-        table->setItem(ii , 3, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerFrictionAngle())));
+        table->setItem(ii , 3, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerFrictionAng())));
         table->setItem(ii , 4, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerCohesion())));
         table->setItem(ii , 5, new QTableWidgetItem(QString::number(soilLayers[ii].getLayerStiffness())));
         table->setItem(ii , 6, new QTableWidgetItem());
@@ -234,7 +235,7 @@ void MainWindow::updateInfo(QTableWidgetItem * item)
       else if (item->column() == 2)
          soilLayers[item->row()].setLayerUnitWeight(item->text().toDouble());
       else if (item->column() == 3)
-         soilLayers[item->row()].setLayerFrictionAngle(item->text().toDouble());
+         soilLayers[item->row()].setLayerFrictionAng(item->text().toDouble());
       else if (item->column() == 4)
          soilLayers[item->row()].setLayerCohesion(item->text().toDouble());
       else if (item->column() == 5)
@@ -296,14 +297,12 @@ void MainWindow::updateEverything()
     return;
 
   soilLayers[0].setLayerTopStress(0);
-  soilLayers[0].update();
   bigStressEditor->insertPlainText("Layer "+QString::number(1)+": Stress at bottom = " + QString::number(soilLayers[0].getLayerBottomStress())+"\n" );
   bigStrengthEditor->insertPlainText("Layer "+QString::number(1)+": Strength at bottom = " + QString::number(soilLayers[0].getLayerBottomStrength())+"\n" );
   bigStiffnessEditor->insertPlainText("Layer "+QString::number(1)+": Stiffness at bottom = " + QString::number(soilLayers[0].getLayerStiffness())+"\n" );
   for (int ii = 1; ii < numLayers; ii++)
     {
       soilLayers[ii].setLayerTopStress(soilLayers[ii-1].getLayerBottomStress());
-      soilLayers[ii].update();
       bigStressEditor->insertPlainText("Layer "+QString::number(ii+1)+": Stress at bottom = " + QString::number(soilLayers[ii].getLayerBottomStress())+"\n" );
       bigStrengthEditor->insertPlainText("Layer "+QString::number(ii+1)+": Strength at bottom = " + QString::number(soilLayers[ii].getLayerBottomStrength())+"\n" );
       bigStiffnessEditor->insertPlainText("Layer "+QString::number(ii+1)+": Stiffness at bottom = " + QString::number(soilLayers[ii].getLayerStiffness())+"\n" );

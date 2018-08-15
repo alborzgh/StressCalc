@@ -22,4 +22,5 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     soilmat.h \
     qcustomplot.h \
-    inputspreadsheet.h
+    inputspreadsheet.h \
+    globals.h
